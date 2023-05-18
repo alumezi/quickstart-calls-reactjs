@@ -1,30 +1,36 @@
-import type { Action } from './reducer';
+import type { Action } from "./reducer";
 import type {
   StatefulDirectCall,
   StatefulLocalParticipant,
   StatefulRemoteParticipant,
   StatefulRoom,
-} from './types';
-import type { DirectCall, LocalParticipant, Participant, RemoteParticipant, Room } from 'sendbird-calls';
+} from "./types";
+import type {
+  DirectCall,
+  LocalParticipant,
+  Participant,
+  RemoteParticipant,
+  Room,
+} from "sendbird-calls";
 
 const registerDirectCallListeners = (
   call: DirectCall,
-  dispatchUpdate: (part: Partial<StatefulDirectCall>) => void,
+  dispatchUpdate: (part: Partial<StatefulDirectCall>) => void
 ) => {
   call.onEstablished = (call: DirectCall) => {
-    dispatchUpdate({ callState: 'established' });
+    dispatchUpdate({ callState: "established" });
   };
   call.onConnected = (call: DirectCall) => {
-    dispatchUpdate({ callState: 'connected' });
+    dispatchUpdate({ callState: "connected" });
   };
   call.onReconnected = (call: DirectCall) => {
-    dispatchUpdate({ callState: 'reconnected' });
+    dispatchUpdate({ callState: "reconnected" });
   };
   call.onReconnecting = (call: DirectCall) => {
-    dispatchUpdate({ callState: 'reconnecting' });
+    dispatchUpdate({ callState: "reconnecting" });
   };
   call.onEnded = (call: DirectCall) => {
-    dispatchUpdate({ callState: 'ended' });
+    dispatchUpdate({ callState: "ended" });
   };
   call.onRemoteAudioSettingsChanged = (call: DirectCall) => {
     dispatchUpdate({ isRemoteAudioEnabled: call.isRemoteAudioEnabled });
@@ -42,23 +48,25 @@ const registerDirectCallListeners = (
 
 export const statefyRoom = (
   room: Room,
-  dispatch: React.Dispatch<Action>,
+  dispatch: React.Dispatch<Action>
 ): StatefulRoom => {
   const dispatchUpdate = (part: Partial<StatefulRoom>) => {
     const payload = {
       roomId: room.roomId,
       ...part,
     };
-    dispatch({ type: 'UPDATE_ROOM', payload });
+    dispatch({ type: "UPDATE_ROOM", payload });
   };
 
   const updateRoom = () => {
     dispatchUpdate(statefyRoom(room, dispatch));
   };
 
-  const updateLocalParticipant = (participant: Partial<StatefulLocalParticipant>) => {
+  const updateLocalParticipant = (
+    participant: Partial<StatefulLocalParticipant>
+  ) => {
     dispatch({
-      type: 'UPDATE_ROOM_LOCAL_PARTICIPANT',
+      type: "UPDATE_ROOM_LOCAL_PARTICIPANT",
       payload: {
         roomId: room.roomId,
         participant,
@@ -67,7 +75,7 @@ export const statefyRoom = (
   };
   const upsertRemoteParticipant = (participant: RemoteParticipant) => {
     dispatch({
-      type: 'UPSERT_ROOM_REMOTE_PARTICIPANT',
+      type: "UPSERT_ROOM_REMOTE_PARTICIPANT",
       payload: {
         roomId: room.roomId,
         participant: statefyRemoteParticipant(participant),
@@ -77,24 +85,31 @@ export const statefyRoom = (
 
   const deleteRemoteParticipant = (participant: RemoteParticipant) => {
     dispatch({
-      type: 'DELETE_ROOM_REMOTE_PARTICIPANT',
+      type: "DELETE_ROOM_REMOTE_PARTICIPANT",
       payload: {
         roomId: room.roomId,
         participantId: participant.participantId,
-      }
-    })
-  }
+      },
+    });
+  };
 
-  const statefulLocalParticipants = room.localParticipant ? [statefyLocalParticipant(room.localParticipant, updateLocalParticipant)] : [];
-  const statefulRemoteParticipants = room.remoteParticipants.map(statefyRemoteParticipant);
-  const statefulParticipants = [...statefulLocalParticipants, ...statefulRemoteParticipants];
+  const statefulLocalParticipants = room.localParticipant
+    ? [statefyLocalParticipant(room.localParticipant, updateLocalParticipant)]
+    : [];
+  const statefulRemoteParticipants = room.remoteParticipants.map(
+    statefyRemoteParticipant
+  );
+  const statefulParticipants = [
+    ...statefulLocalParticipants,
+    ...statefulRemoteParticipants,
+  ];
 
-  room.on('remoteParticipantEntered', upsertRemoteParticipant);
-  room.on('remoteParticipantStreamStarted', upsertRemoteParticipant);
-  room.on('remoteParticipantExited', deleteRemoteParticipant);
-  room.on('remoteAudioSettingsChanged', upsertRemoteParticipant);
-  room.on('remoteVideoSettingsChanged', upsertRemoteParticipant);
-  room.on('error', error => {
+  room.on("remoteParticipantEntered", upsertRemoteParticipant);
+  room.on("remoteParticipantStreamStarted", upsertRemoteParticipant);
+  room.on("remoteParticipantExited", deleteRemoteParticipant);
+  room.on("remoteAudioSettingsChanged", upsertRemoteParticipant);
+  room.on("remoteVideoSettingsChanged", upsertRemoteParticipant);
+  room.on("error", (error) => {
     console.error(error); // TODO:
   });
   return {
@@ -102,6 +117,7 @@ export const statefyRoom = (
     roomType: room.roomType,
     createdAt: room.createdAt,
     createdBy: room.createdBy,
+    sendInvitation: room.sendInvitation,
     participants: statefulParticipants,
     localParticipant: statefulLocalParticipants[0],
     remoteParticipants: statefulRemoteParticipants,
@@ -115,12 +131,16 @@ export const statefyRoom = (
       room.exit();
       updateRoom();
     },
+    async delete() {
+      await room.delete();
+      return;
+    },
   };
 };
 
 export const statefyLocalParticipant = (
   participant: LocalParticipant,
-  update: (participant: Partial<StatefulLocalParticipant>) => any,
+  update: (participant: Partial<StatefulLocalParticipant>) => any
 ): StatefulLocalParticipant => {
   return {
     participantId: participant.participantId,
@@ -159,7 +179,7 @@ export const statefyLocalParticipant = (
 };
 
 export const statefyRemoteParticipant = (
-  participant: RemoteParticipant,
+  participant: RemoteParticipant
 ): StatefulRemoteParticipant => {
   return {
     participantId: participant.participantId,
@@ -181,14 +201,14 @@ export const statefyRemoteParticipant = (
 export const statefyDirectCall = (
   call: DirectCall,
   dispatch: React.Dispatch<Action>,
-  registerListener: boolean = true,
+  registerListener: any
 ): StatefulDirectCall => {
   const dispatchUpdate = (part: Partial<StatefulDirectCall>) => {
     const payload = {
       callId: call.callId,
       ...part,
     };
-    dispatch({ type: 'UPDATE_CALL', payload });
+    dispatch({ type: "UPDATE_CALL", payload });
   };
 
   if (registerListener) {
@@ -196,7 +216,8 @@ export const statefyDirectCall = (
   }
 
   return {
-    callState: (call.localUser.userId === call.caller.userId) ? 'dialing' : 'ringing',
+    callState:
+      call.localUser.userId === call.caller.userId ? "dialing" : "ringing",
     callId: call.callId,
     caller: call.caller, // This should not mutate
     callee: call.callee, // This should not mutate

@@ -5,15 +5,22 @@ import {
   StartVideoButton,
   StopVideoButton,
   UnmuteButton,
-} from 'components/atoms/CallButtons';
-import { InputWithCopyIcon } from 'components/molecules/Info';
-import DeviceSettings from 'components/organisms/DeviceSettings';
-import MediaContent from 'components/organisms/GroupCall/MediaContent';
-import { RoomInfo } from 'components/organisms/RoomCreated/RoomCreated';
-import type { StatefulRoom, StatefulParticipant } from 'lib/sendbird-calls';
-import { useState } from 'react';
-import styled, { css } from 'styled-components';
-import { demi, heavy, heading2text1, midBig, normal, small } from 'styles/fonts';
+} from "components/atoms/CallButtons";
+import { InputWithCopyIcon } from "components/molecules/Info";
+import DeviceSettings from "components/organisms/DeviceSettings";
+import MediaContent from "components/organisms/GroupCall/MediaContent";
+import { RoomInfo } from "components/organisms/RoomCreated/RoomCreated";
+import type { StatefulRoom, StatefulParticipant } from "lib/sendbird-calls";
+import { useState } from "react";
+import styled, { css } from "styled-components";
+import {
+  demi,
+  heavy,
+  heading2text1,
+  midBig,
+  normal,
+  small,
+} from "styles/fonts";
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -70,13 +77,12 @@ const Button = styled.div`
   align-items: center;
   justify-content: space-between;
   ${normal};
-  ${heavy}:
-  letter-spacing: -0.1px;
+  ${heavy}: letter-spacing: -0.1px;
   color: var(--white);
 `;
 
 const ButtonIcon = styled.div<{ src: string }>`
-  background-image: ${props => css`url(${props.src})`};
+  background-image: ${(props) => css`url(${props.src})`};
   background-repeat: no-repeat;
   background-position: center;
   width: 24px;
@@ -101,11 +107,12 @@ const Side = styled.div<{ show: boolean }>`
   min-width: 376px;
   width: 376px;
   background-color: var(--white);
-  ${props => props.show ? css`
-  
-` : css`
-  margin-right: -376px;
-`};
+  ${(props) =>
+    props.show
+      ? css``
+      : css`
+          margin-right: -376px;
+        `};
 `;
 
 const SideTitle = styled.div`
@@ -139,16 +146,16 @@ const Participants = styled.div`
   width: 100%;
   padding: 0 24px;
   flex: 1;
-`
+`;
 
-const ParticipantWrapper = styled.div<{ src: string; }>`
+const ParticipantWrapper = styled.div<{ src: string }>`
   display: flex;
   align-items: center;
   height: 60px;
-  &>div:first-child {
+  & > div:first-child {
     width: 32px;
     height: 32px;
-    background-image: url(${props => props.src});
+    background-image: url(${(props) => props.src});
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -156,7 +163,7 @@ const ParticipantWrapper = styled.div<{ src: string; }>`
     border-radius: 50%;
     margin-right: 12px;
   }
-`
+`;
 
 const ParticipantNickname = styled.div`
   ${normal};
@@ -171,14 +178,18 @@ const ParticipantId = styled.div`
 
 const Participant = ({ participant }: { participant: StatefulParticipant }) => {
   return (
-    <ParticipantWrapper src={participant.user.profileUrl || '/icons/icon-avatar.svg'}>
+    <ParticipantWrapper
+      src={participant.user.profileUrl || "/icons/icon-avatar.svg"}
+    >
       <div />
       <div>
-        <ParticipantNickname>{participant.user.nickname || '—'}</ParticipantNickname>
+        <ParticipantNickname>
+          {participant.user.nickname || "—"}
+        </ParticipantNickname>
         <ParticipantId>User ID: {participant.user.userId}</ParticipantId>
       </div>
     </ParticipantWrapper>
-  )
+  );
 };
 
 const ShareWrapper = styled.div`
@@ -192,7 +203,7 @@ const ShareWrapper = styled.div`
 
 type GroupCallProps = {
   room: StatefulRoom;
-}
+};
 const GroupCall = ({ room }: GroupCallProps) => {
   const [showDeviceSettings, setShowDeviceSettings] = useState(false);
   const [showSide, setShowSide] = useState(false);
@@ -204,9 +215,14 @@ const GroupCall = ({ room }: GroupCallProps) => {
     <Wrapper>
       <Main>
         <Header>
-          <span onClick={() => {
-            setShowRoomInfo(true);
-          }} style={{ cursor: 'pointer' }}>{room.roomId}</span>
+          <span
+            onClick={() => {
+              setShowRoomInfo(true);
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            {room.roomId}
+          </span>
           <ChevronRight />
         </Header>
 
@@ -214,18 +230,26 @@ const GroupCall = ({ room }: GroupCallProps) => {
 
         <Footer>
           <Button onClick={() => setShowDeviceSettings(true)}>
-            <ButtonIcon src="/icons/ic-settings.svg"/>
+            <ButtonIcon src="/icons/ic-settings.svg" />
             Settings
           </Button>
           <UtilityButtons>
-            {localParticipant.isAudioEnabled ? <MuteButton onClick={() => localParticipant.muteMicrophone()}/> :
-              <UnmuteButton onClick={() => localParticipant.unmuteMicrophone()}/>}
-            {localParticipant.isVideoEnabled ? <StopVideoButton onClick={() => localParticipant.stopVideo()}/> :
-              <StartVideoButton onClick={() => localParticipant.startVideo()}/>}
-            <EndButton onClick={() => room.exit()}/>
+            {localParticipant.isAudioEnabled ? (
+              <MuteButton onClick={() => localParticipant.muteMicrophone()} />
+            ) : (
+              <UnmuteButton
+                onClick={() => localParticipant.unmuteMicrophone()}
+              />
+            )}
+            {localParticipant.isVideoEnabled ? (
+              <StopVideoButton onClick={() => localParticipant.stopVideo()} />
+            ) : (
+              <StartVideoButton onClick={() => localParticipant.startVideo()} />
+            )}
+            <EndButton onClick={() => room.exit()} />
           </UtilityButtons>
-          <Button onClick={() => setShowSide(!showSide)} >
-            <ButtonIcon src="/icons/ic-user.svg"/>
+          <Button onClick={() => setShowSide(!showSide)}>
+            <ButtonIcon src="/icons/ic-user.svg" />
             Participants
           </Button>
         </Footer>
@@ -241,13 +265,24 @@ const GroupCall = ({ room }: GroupCallProps) => {
       </Main>
       <Side show={showSide}>
         <SideTitle>
-          <div>
-          Participants ({room.participants.length})
-          </div>
-          <SideClose onClick={() => setShowSide(false)}><div/></SideClose>
+          <div>Participants ({room.participants.length})</div>
+          <button
+            onClick={async () => {
+              //2856982
+              console.log(room);
+              await room.sendInvitation("2856982");
+            }}
+          >
+            Invite
+          </button>
+          <SideClose onClick={() => setShowSide(false)}>
+            <div />
+          </SideClose>
         </SideTitle>
         <Participants>
-          {participants.map(p => <Participant participant={p} />)}
+          {participants.map((p) => (
+            <Participant participant={p} />
+          ))}
         </Participants>
         <ShareWrapper>
           <InputWithCopyIcon title="Share room ID" text={room.roomId} />
