@@ -10483,10 +10483,10 @@
     "range-parser" "~1.2.1"
     "statuses" "~1.5.0"
 
-"sendbird-calls@^1.9.3":
-  "integrity" "sha512-D+oenFER+Un0O1IJyCoCY43RDGCI5nBEG//BL8aP/VmIET6MNkII4pFsAOkmzu7T5/mkNdku6k0I/6KNhUtrEw=="
-  "resolved" "https://registry.npmjs.org/sendbird-calls/-/sendbird-calls-1.9.3.tgz"
-  "version" "1.9.3"
+"sendbird-calls@^1.10.7":
+  "integrity" "sha512-LE409o/sBzmLEzJB8jteb1/k+EyM1Nz+u1ijQcjmhwXukz82dCd13LLGNrPMNMO6P5eWmDooUP2fBzOyY73LJA=="
+  "resolved" "https://registry.npmjs.org/sendbird-calls/-/sendbird-calls-1.10.9.tgz"
+  "version" "1.10.9"
 
 "serialize-javascript@^4.0.0":
   "integrity" "sha512-GaNA54380uFefWghODBWEGisLZFj00nS5ACs6yHa9nLqlLpVLO8ChDGeKRjZnV4Nh4n0Qi7nhYZD/9fCPzEqkw=="
